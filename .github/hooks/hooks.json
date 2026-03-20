@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"[Console]::In.ReadToEnd() | Add-Content -Path 'C:\\Users\\simunnn\\Desktop\\asp\\PolimanacASP\\.github\\hooks\\agent_log.txt'\""
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"[Console]::In.ReadToEnd() | Add-Content -Path 'C:\\Users\\simunnn\\Desktop\\asp\\PolimanacASP\\.github\\hooks\\agent_log.txt'\""
+      }
+    ]
+  }
+}

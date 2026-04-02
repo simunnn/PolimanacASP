@@ -308,6 +308,91 @@ namespace InventoryManagement.Console
             order3.TotalPrice = order3.OrderItems.Sum(x => x.TotalPrice);
 
             System.Console.WriteLine($"Seeded {categories.Count} categories, {products.Count} products, {orders.Count} orders.");
+
+            //LINQ
+            // 1) LowStockProducts
+            var lowStockProducts = products
+                .Where(p => p.InventoryItems.Sum(ii => ii.QuantityInStock) < p.MinimumStock)
+                .OrderBy(p => p.Name)
+                .ToList();
+
+            System.Console.WriteLine("Low stock products:");
+            if (lowStockProducts.Count > 0)
+            {
+                lowStockProducts.ForEach(p => System.Console.WriteLine($"- {p.Name}"));
+            }
+            else
+            {
+                System.Console.WriteLine("- No products are currently below minimum stock.");
+            }
+            // Pronalazi proizvode čija je ukupna količina u svim skladištima ispod minimalne zalihe.
+
+
+            // 2) TopSupplierByProductCount
+            var topSupplier = suppliers
+                .OrderByDescending(s => s.Products.Count)
+                .FirstOrDefault();
+
+            System.Console.WriteLine($"Top supplier by product count: {topSupplier?.Name} ({topSupplier?.Products.Count ?? 0})");
+            // Nalazi dobavljača koji ima najviše proizvoda.
+
+
+            // 3) OrdersCreatedInMarch2026
+            var marchOrders = orders
+                .Where(o => o.OrderDate.Year == 2026 && o.OrderDate.Month == 3)
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
+
+            System.Console.WriteLine($"Orders created in March 2026: {marchOrders.Count}");
+            // Pronalazi sve narudžbe kreirane u ožujku 2026. i sortira ih po datumu silazno.
+
+
+            // 4) TotalRevenueDelivered
+            var totalRevenueDelivered = orders
+                .Where(o => o.Status == OrderStatus.Delivered)
+                .Sum(o => o.TotalPrice);
+
+            System.Console.WriteLine($"Total delivered revenue: {totalRevenueDelivered:C}");
+            // Računa ukupnu vrijednost isporučenih narudžbi.
+
+
+            // 5) MostValuableOrder
+            var mostValuableOrder = orders
+                .OrderByDescending(o => o.TotalPrice)
+                .FirstOrDefault();
+
+            System.Console.WriteLine($"Most valuable order: {mostValuableOrder?.OrderNumber} = {mostValuableOrder?.TotalPrice:C}");
+            // Pronalazi narudžbu s najvećom ukupnom cijenom.
+
+
+            // 6) UsersWithProcessingOrders
+            var usersWithProcessingOrders = users
+                .Select(u => new
+                {
+                    User = u,
+                    ProcessingOrders = u.Orders.Where(o => o.Status == OrderStatus.Processing).ToList()
+                })
+                .Where(x => x.ProcessingOrders.Count > 0)
+                .ToList();
+
+            System.Console.WriteLine($"Users with processing orders: {usersWithProcessingOrders.Count}");
+            // Pronalazi korisnike koji imaju barem jednu narudžbu u statusu Processing.
+
+
+            // 7) WarehouseStockSummary
+            var warehouseStockSummary = warehouses
+                .Select(w => new
+                {
+                    Warehouse = w,
+                    TotalStock = w.InventoryItems.Sum(ii => ii.QuantityInStock)
+                })
+                .OrderByDescending(x => x.TotalStock)
+                .ToList();
+
+            System.Console.WriteLine("Warehouse stock summary:");
+            warehouseStockSummary.ForEach(x => System.Console.WriteLine($"- {x.Warehouse.Name}: {x.TotalStock} pcs"));
+            // Računa ukupnu količinu proizvoda po skladištu i sortira skladišta po ukupnoj zalihi.
+
         }
     }
 }

@@ -1,0 +1,17 @@
+# Visual Studio cache
+.vs/
+
+# Build output
+bin/
+obj/
+
+# User-specific settings
+*.user
+*.suo
+
+# VS Code settings (ako ne želiš u repo)
+.vscode/
+
+# Logs, privremene datoteke
+*.log
+*.cache
